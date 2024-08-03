@@ -4,6 +4,7 @@ import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import  phoneServices from './services/phone'
+import './index.css'
 
 const App = () => {
 
@@ -13,6 +14,8 @@ const App = () => {
     filter:''
   });
   const [number, setNumber] = useState(0);
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState(false)
 
 
   useEffect(() => {
@@ -35,8 +38,9 @@ const App = () => {
         
         const updateResult=phonebooks.map((person)=>person.id===response.id?response :person);
         setPhonebooks(updateResult)
-        
+     
       })
+   
       }
       
     } else {
@@ -44,6 +48,10 @@ const App = () => {
         .then(response => {
           setPhonebooks([...phonebooks, response]);
         });
+        setSuccess(true)
+        setTimeout(()=>{
+          setSuccess(false)
+      }, 5000)
     }
   };
   
@@ -68,14 +76,21 @@ const App = () => {
       const response=phoneServices.deleteContact(phoneContact.id);
      response.then((response)=> phonebooks.filter((phonebook=>phonebook.name!==response.name)))
      .then((res)=>setPhonebooks([...res]))
-     .catch(error => console.log('Error delete user :', error));
-    }
-     
+     .catch(() => {
+      setError(true)
+      setTimeout(()=>{
+setError(false)
+      }, 5000)
+      setPhonebooks(phonebooks.filter(n => n.id !== phoneContact.id))
+    })
+    }     
   }
-
+if(phonebooks.length===0) return <div>Loading.....</div>
   return (
     <div>
       <h2>Phonebook</h2>
+      {success && <h3 className='message'> Add {newName.name}</h3>}
+      {error && <h3 className='error'> Information of {newName.name} was already delete from the server</h3>}
       <Filter filter={newName.filter} name='filter' handleOnChangeName={handleOnChangeName}/>
 
       <h3>Add a new</h3>
