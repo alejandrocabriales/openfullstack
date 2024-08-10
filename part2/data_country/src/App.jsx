@@ -96,14 +96,16 @@ function App() {
             <div>
               <h1> weather in {activeCountry.capital}</h1>
               <div>
-                temperarture <span>{weather.main.temp} Celcius</span>
+                temperarture <span>{weather.main?.temp} Celcius</span>
               </div>
               <h2> Feels like {weather.main?.feels_like} Celcius</h2>
 
-              <img
-                src={`https://openweathermap.org/img/wn/${weather?.weather[0]?.icon}@2x.png`}
-                alt={weather?.weather[0]?.description}
-              />
+              {weather.weather && weather.weather[0] && (
+                <img
+                  src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+                  alt={weather.weather[0].description}
+                />
+              )}
               <div> Winds {weather?.wind?.speed}</div>
             </div>
           </div>
